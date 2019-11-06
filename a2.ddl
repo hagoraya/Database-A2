@@ -27,10 +27,7 @@ CREATE TABLE country(
     cid         INTEGER     PRIMARY KEY,
     cname       VARCHAR     NOT NULL
     );
-
-INSERT INTO country (cid, cname)
-VALUES(212,"Canada");
-    
+   
 -- The player table contains information about some tennis players.
 -- 'pid' is the id of the player.
 -- 'pname' is the name of the player.
