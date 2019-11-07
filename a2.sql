@@ -19,10 +19,13 @@ insert into a2.record (pid,year,wins,losses)
 values (32,2018,12,5),(12,2018,8,38);
 
 insert into tournament (tid, tname, cid)
-values (543, 'NA International', 1), (322, 'US Open', 2);
+values (543, 'NA International', 1), 
+       (322, 'US Open', 2);
 
 insert into court (courtid, courtname, capacity, tid)
-values (92, 'Rogers arena', 5000, 322), (99, 'MSG', 10000, 543);
+values (92, 'Rogers arena', 5000, 322), 
+        (99, 'MSG', 10000, 543);
+        (98,'Barkleys', 6000, 322);
 
 insert into champion (pid, year, tid)
 values (32,2018,322);
@@ -35,7 +38,13 @@ values (1022, 2018, 92, 32,12,60),
 --INSERT INTO query1
 
 --Query 2 statements
---INSERT INTO query2
+INSERT INTO query2 (
+    select tournament.tname,sum(court.capacity)
+    from a2.tournament, a2.court
+    where tournament.tid = court.tid
+    group by tournament.tid
+    LIMIT 1
+)
 
 --Query 3 statements
 --INSERT INTO query3
