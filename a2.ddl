@@ -120,7 +120,7 @@ CREATE TABLE query2(
 CREATE TABLE query2(
     tname   VARCHAR,
     totalCapacity INTEGER    
-);
+); 
 
 CREATE TABLE query3(
     p1id    INTEGER,
