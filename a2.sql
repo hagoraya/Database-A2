@@ -16,8 +16,8 @@ INSERT INTO query2 (
     LIMIT 1
 );
 
-
-delete from query4;
+--Query 4
+delete from query4;  --TODO: delete this line later 
 
 -- temp view that contains all the champions
 create or replace view allChamps as 
@@ -32,7 +32,29 @@ from allChamps
 where allChamps.tid in (select tournament.tid from tournament)
 group by allChamps.pid, allChamps.pname
 having count(distinct tid) = (select count(*) from tournament)
+order by allChamps.pname
 );
 
-
 drop view allChamps;
+
+--Query 6
+delete from query6; --TODO: delete this later
+
+--Any play that as a record from 2011 and 2014
+create or replace view rangeOfYears as 
+select p.pid, r.year, r.wins
+from player p, record r
+where (p.pid = r.pid) and (year between 2011 and 2014);
+
+--All the players with only the 4 years 
+create or replace view between11and14 as 
+select *
+from rangeOfYears
+where pid in ( 
+    select pid
+    from rangeOfYears
+    group by pid 
+    having count(pid) > 3
+)
+
+--drop view rangeOfYear 
