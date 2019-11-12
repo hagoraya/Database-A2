@@ -80,13 +80,18 @@ from playsandyearwins pay
 where (w2011 < w2012) and (w2012 < w2013) and (w2013 < w2014)
 order by pay.pname asc);
 
+--drop views for q6
+drop view playsandyearwins, y2014, y2013, y2012, y2011, between11and14,rangeOfYears;
 
 
+--query 8
 
 
-
-
-
-
-
---drop view rangeOfYear 
+INSERT INTO query8(
+select distinct p1.pname p1name,p2.pname p2name,c.cname cname from event e
+left join player p1 on e.winid=p1.pid
+left join player p2 on e.lossid=p2.pid
+left join country c on c.cid = p1.cid and c.cid = p2.cid
+where p1.cid=p2.cid
+order by c.cname asc, p1.pname desc
+);
