@@ -1,0 +1,106 @@
+SET search_path TO A2;
+
+--If you define any views for a question (you are encouraged to), you must drop them
+--after you have populated the answer table for that question.
+--Good Luck!
+
+--Query 1
+INSERT INTO query1(
+select p.pname, co.cname, t.tname
+from country co, tournament t, champion c, player p
+where co.cid=t.cid and t.tid=c.tid and c.pid=p.pid and p.cid=co.cid
+order by p.pname);
+
+--Query 2
+INSERT INTO query2(
+CREATE VIEW capacities as
+(select max(t.TName) tname, sum(c.capacity) totalCapacity
+from tournament t join court c on t.tid=c.tid
+group by t.tname);
+select * from capacities where capacity >= all (select capacity from capacities);
+DROP VIEW capacities;
+);
+--Query 3
+INSERT INTO query3(
+CREATE VIEW highestRankedMatchup AS (
+select p1.pid p1id, p1.pname p1name, min(p2.globalrank)
+from player p1, player p2, event e
+where e.winid=p1.pid and e.lossid=p2.pid
+group by p1.pid);
+select h.p1id, h.p1name, player.pid p2id, player.pname p2name
+from player join highestRankedMatchup h
+on player.globalrank=h.min order by h.p1id;
+DROP VIEW capacities;
+);
+
+--Query 4
+INSERT INTO query4(
+select p.pid, p.pname
+from champion c
+join player p on p.pid = c.pid
+group by p.pid,p.pname having COUNT(distinct c.tid) = (select count(tid) from tournament)
+order by p.pname asc;
+);
+--Query 5
+INSERT INTO query5(
+select record.pid, max(player.pname) pname, avg(wins) avgwins
+from record join player on record.pid=player.pid
+where year>=2001 and year<=2004
+group by record.pid
+order by avgwins desc
+limit 10;);
+
+--Query 6
+INSERT INTO query6(
+CREATE VIEW v_2011 AS (select * from record r where r.year = 2011);
+CREATE VIEW v_2012 AS (select * from record r where r.year = 2012);
+CREATE VIEW v_2013 AS (select * from record r where r.year = 2013);
+CREATE VIEW v_2014 AS (select * from record r where r.year = 2014);
+CREATE VIEW playerWins AS (
+select r.pid, p.pname, max(v_2011.wins) wins_2011, max(v_2012.wins) wins_2012, max(v_2013.wins) wins_2013, max(v_2014.wins) wins_2014 from record r
+left join player p on p.pid=r.pid
+left join v_2011 on v_2011.pid=r.pid and v_2011.year=r.year
+left join v_2012 on v_2012.pid=r.pid and v_2012.year=r.year
+left join v_2013 on v_2013.pid=r.pid and v_2013.year=r.year
+left join v_2014 on v_2014.pid=r.pid and v_2014.year=r.year
+group by r.pid, p.pname)
+select pw.pid, pw.pname from playerWins pw
+where wins_2011 < wins_2012 AND wins_2012 < wins_2013 AND wins_2013 < wins_2014
+order by pw.pname asc;
+DROP VIEW v_2011;
+DROP VIEW v_2012;
+DROP VIEW v_2013;
+DROP VIEW v_2014;
+DROP VIEW playerWins;
+);
+
+--Query 7
+INSERT INTO query7(
+select max(player.pname), year
+from champion join player on champion.pid=player.pid
+group by champion.pid, year having count(tid)>=2
+order by max(pname) desc, year desc;
+);
+
+--Query 8
+INSERT INTO query8(
+select distinct p1.pname p1name,p2.pname p2name,c.cname from event e
+left join player p1 on e.winid=p1.pid
+left join player p2 on e.lossid=p2.pid
+left join country c on c.cid = p1.cid and c.cid = p2.cid
+where p1.cid=p2.cid
+order by c.cname asc, p1.pname desc;
+);
+
+--Query 9
+INSERT INTO query9(
+select max(country.cname) cname, count(champion.pid) champions
+from champion, player, country
+where champion.pid=player.pid and player.cid=country.cid
+group by country.cid
+order by champions desc
+limit 1;
+);
+
+--Query 10
+INSERT INTO query10()

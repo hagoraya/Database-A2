@@ -46,7 +46,7 @@ select p.pid, r.year, r.wins
 from player p, record r
 where (p.pid = r.pid) and (year between 2011 and 2014);
 
---All the players with only the 4 years 
+--All the players with only the 4 consecuituve years 
 create or replace view between11and14 as 
 select *
 from rangeOfYears
@@ -56,5 +56,37 @@ where pid in (
     group by pid 
     having count(pid) > 3
 )
+group by pid,year, wins;
+
+create or replace view y2011 as ( select * from between11and14 where between11and14.year = 2011);
+create or replace view y2012 as ( select * from between11and14 where between11and14.year = 2012);
+create or replace view y2013 as ( select * from between11and14 where between11and14.year = 2013);
+create or replace view y2014 as ( select * from between11and14 where between11and14.year = 2014);
+
+
+create or replace view playsandyearwins as (
+select p.pname, b.pid, max(y2011.wins) w2011, max(y2012.wins) w2012, max(y2013.wins) w2013, max(y2014.wins) w2014
+from between11and14 b
+left join player p on p.pid = b.pid
+left join y2011 on y2011.pid=b.pid and y2011.year=b.year
+left join y2012 on y2012.pid=b.pid and y2012.year=b.year
+left join y2013 on y2013.pid=b.pid and y2013.year=b.year
+left join y2014 on y2014.pid=b.pid and y2014.year=b.year
+group by b.pid, p.pname );
+
+insert into query6(
+select pay.pid, pay.pname
+from playsandyearwins pay
+where (w2011 < w2012) and (w2012 < w2013) and (w2013 < w2014)
+order by pay.pname asc);
+
+
+
+
+
+
+
+
+
 
 --drop view rangeOfYear 
