@@ -1,5 +1,5 @@
 SET search_path TO A2;
--- Add below your SQL statements. 
+-- Add below your SQL statements.
 -- For each of the queries below, your final statement should populate the respective answer table (queryX) with the correct tuples. It should look something like:
 -- INSERT INTO queryX (SELECT … <complete your SQL query here> …)
 -- where X is the correct index [1, …,10].
@@ -9,10 +9,20 @@ SET search_path TO A2;
 
 
 delete from query2;
-delete from query4; 
+delete from query4;
 delete from query6;
 delete from query10;
 
+--Query 1 statements
+INSERT INTO query1 (
+    select player.pname, country.cname, tournament.tname
+    from a2.player, a2.country, a2.tournament, a2.champion
+    where champion.pid = player.pid and champion.tid = tournament.tid AND
+    tournament.cid = player.cid and player.cid = country.cid
+    order by player.pname asc
+);
+
+--Query 2 statements
 INSERT INTO query2 (
     select tournament.tname,sum(court.capacity) as totalCapacity
     from a2.tournament, a2.court
@@ -22,10 +32,24 @@ INSERT INTO query2 (
     LIMIT 1
 );
 
---Query 4
+--Query 3 statements
+CREATE VIEW minGlobalRank AS ( --to find the highest ranked player each player has faced
+  select p1.pid, p1.pname, MIN(p2.globalrank) minRank
+  from A2.player p1, A2.event, A2.player p2
+  where (p1.pid = event.winid and event.lossid = p2.pid) or (event.winid = p2.pid and event.lossid = p1.pid)
+  group by p1.pid
+);
+INSERT INTO query3 (
+  select p1.pid p1id, p1.pname p1name, p2.pid p2id, p2.pname p2name
+  from A2.player p1, minGlobalRank min, A2.player p2
+  where p1.pid = min.pid and p2.globalrank = min.minRank
+  order by p1.pname asc
+);
+DROP VIEW minGlobalRank;
 
+--Query 4 statements
 -- temp view that contains all the champions
-create or replace view allChamps as 
+create or replace view allChamps as
 select player.pid, player.pname, champion.tid
 from player, champion
 where (champion.pid = player.pid);
@@ -39,25 +63,32 @@ group by allChamps.pid, allChamps.pname
 having count(distinct tid) = (select count(*) from tournament)
 order by allChamps.pname
 );
-
 drop view allChamps;
 
---Query 6
+--Query 5 statements
+INSERT INTO query5 (
+  select p1.pid, p1.pname, AVG(wins) avgwins
+  from a2.player p1,a2.record r
+  where r.year >= 2011 and r.year <= 2014 and r.pid = p1.pid
+  group by p1.pid
+  order by avgwins desc
+  LIMIT 10
+);
 
+--Query 6 statements
 --Any play that as a record from 2011 and 2014
-create or replace view rangeOfYears as 
+create or replace view rangeOfYears as
 select p.pid, r.year, r.wins
 from player p, record r
 where (p.pid = r.pid) and (year between 2011 and 2014);
-
---All the players with only the 4 consecuituve years 
-create or replace view between11and14 as 
+--All the players with only the 4 consecuituve years
+create or replace view between11and14 as
 select *
 from rangeOfYears
-where pid in ( 
+where pid in (
     select pid
     from rangeOfYears
-    group by pid 
+    group by pid
     having count(pid) > 3
 )
 group by pid,year, wins;
@@ -83,14 +114,20 @@ select pay.pid, pay.pname
 from playsandyearwins pay
 where (w2011 < w2012) and (w2012 < w2013) and (w2013 < w2014)
 order by pay.pname asc);
-
 --drop views for q6
 drop view playsandyearwins, y2014, y2013, y2012, y2011, between11and14,rangeOfYears;
 
+--Query 7 statements
+INSERT INTO query7 (
+  select p1.pname, c.year
+  from a2.player p1, a2.champion c
+  where p1.pid = c.pid
+  group by p1.pid, c.year
+  having COUNT(c.pid) >= 2
+  order by p1.pname, c.year DESC
+);
 
---query 8
-
-
+--Query 8 statements
 INSERT INTO query8(
 select distinct p1.pname p1name,p2.pname p2name,c.cname cname from event e
 left join player p1 on e.winid=p1.pid
@@ -100,9 +137,24 @@ where p1.cid=p2.cid
 order by c.cname asc, p1.pname desc
 );
 
+--Query 9 statements
+CREATE VIEW maxChampionships AS (
+  select max(sub.cnt)
+  from (select count(p.pid) as cnt from a2.country ctry, a2.champion ch, a2.player p
+  where p.pid = ch.pid and p.cid = ctry.cid
+  group by ctry.cname) AS sub
+);
+INSERT INTO query9 (
+  select ctry.cname, COUNT(p.pid) champions
+  from a2.country ctry, a2.champion ch, a2.player p
+  where p.pid = ch.pid and p.cid = ctry.cid
+  group by ctry.cname
+  HAVING COUNT(p.pid) = (select * from maxChampionships)
+  order by ctry.cname desc
+);
+DROP VIEW maxChampionships;
 
---query10
-
+--Query 10 statements
 --view of all players and their time played
 create or replace view timeplayed as (
 select lossid, duration from event
@@ -112,15 +164,14 @@ group by lossid, winid, duration
 
 );
 
---sum of duration of each player avg over 200 
+--sum of duration of each player over 200
 create or replace view sumTime as (
     select tp.lossid, avg(tp.duration)
-    from timeplayed tp 
-    group by tp.lossid    
+    from timeplayed tp
+    group by tp.lossid
     having avg(tp.duration) > 200
 
 );
-
 
 Insert into query10 (
     select pn.pname
@@ -133,4 +184,3 @@ Insert into query10 (
 );
 
 drop view sumTime, timeplayed;
-    
