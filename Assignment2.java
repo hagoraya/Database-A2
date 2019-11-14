@@ -56,9 +56,15 @@ public class Assignment2 {
     }
     
     public boolean insertPlayer(int pid, String pname, int globalRank, int cid) {
-        
-
-        return false;
+           String sqlText = "INSERT INTO a2.player (pid, pname, globalRank, cid) VALUES (" +pid+ ", \'" + pname + "\'," + globalRank + "," + cid + ");";  
+           try{
+               ps = connection.prepareStatement(sqlText);
+               ps.executeUpdate();
+               ps.close();
+               return true;
+           } catch (SQLException e){
+               return false;
+           }
     }
   
     public int getChampions(int pid) {
