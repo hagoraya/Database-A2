@@ -13,22 +13,51 @@ public class Assignment2 {
   
     // Resultset for the query
     ResultSet rs;
-  
+
+
+    public static final String myDriver = "org.postgresql.Driver";
+
+
+
     //CONSTRUCTOR
     Assignment2(){
+        System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
+
+        try {
+            //Load the JDBC driver
+            Class.forName(myDriver);
+
+        } catch (ClassNotFoundException e) {
+            return;
+        }
     }
   
     //Using the input parameters, establish a connection to be used for this session. Returns true if connection is sucessful
     public boolean connectDB(String URL, String username, String password){
-        return false;
+        try{
+            connection = DriverManager.getConnection(URL, username, password);
+            return true;
+
+        } catch (SQLException e){
+             return false;
+        }
+      
     }
   
     //Closes the connection. Returns true if closure was sucessful
     public boolean disconnectDB(){
-        return false;    
+        try {
+            connection.close();
+            return true;
+        } catch (SQLException e){
+            return false;
+        }
+        
     }
     
     public boolean insertPlayer(int pid, String pname, int globalRank, int cid) {
+        
+
         return false;
     }
   

@@ -112,7 +112,7 @@ group by lossid, winid, duration
 
 );
 
---sum of duration of each player over 200 
+--sum of duration of each player avg over 200 
 create or replace view sumTime as (
     select tp.lossid, avg(tp.duration)
     from timeplayed tp 
@@ -132,5 +132,5 @@ Insert into query10 (
     order by pn.pname desc
 );
 
---drop view sumTime, timeplayed;
+drop view sumTime, timeplayed;
     
