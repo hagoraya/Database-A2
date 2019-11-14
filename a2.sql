@@ -8,6 +8,11 @@ SET search_path TO A2;
 -- Good Luck!
 
 
+delete from query2;
+delete from query4; 
+delete from query6;
+delete from query10;
+
 INSERT INTO query2 (
     select tournament.tname,sum(court.capacity)
     from a2.tournament, a2.court
@@ -17,7 +22,6 @@ INSERT INTO query2 (
 );
 
 --Query 4
-delete from query4;  --TODO: delete this line later 
 
 -- temp view that contains all the champions
 create or replace view allChamps as 
@@ -38,7 +42,6 @@ order by allChamps.pname
 drop view allChamps;
 
 --Query 6
-delete from query6; --TODO: delete this later
 
 --Any play that as a record from 2011 and 2014
 create or replace view rangeOfYears as 
@@ -95,3 +98,37 @@ left join country c on c.cid = p1.cid and c.cid = p2.cid
 where p1.cid=p2.cid
 order by c.cname asc, p1.pname desc
 );
+
+
+--query10
+
+--view of all players and their time played
+create or replace view timeplayed as (
+select lossid, duration from event
+union all
+select winid, duration from event
+group by lossid, winid, duration
+
+);
+
+--sum of duration of each player over 200 
+create or replace view sumTime as (
+    select tp.lossid, sum(tp.duration)
+    from timeplayed tp 
+    group by tp.lossid    
+    having sum(tp.duration) > 200
+
+);
+
+
+insert into query10(
+    select pn.pname
+    from player pn
+    left join sumTime st on pn.pid = st.lossid
+    left join record r on st.lossid = r.pid
+    where r.wins > r.losses
+    order by pn.pname desc
+);
+
+drop view sumTime, timeplayed;
+    
