@@ -14,10 +14,11 @@ delete from query6;
 delete from query10;
 
 INSERT INTO query2 (
-    select tournament.tname,sum(court.capacity)
+    select tournament.tname,sum(court.capacity) as totalCapacity
     from a2.tournament, a2.court
     where tournament.tid = court.tid
     group by tournament.tid
+    order by sum(court.capacity) desc
     LIMIT 1
 );
 
@@ -113,22 +114,23 @@ group by lossid, winid, duration
 
 --sum of duration of each player over 200 
 create or replace view sumTime as (
-    select tp.lossid, sum(tp.duration)
+    select tp.lossid, avg(tp.duration)
     from timeplayed tp 
     group by tp.lossid    
-    having sum(tp.duration) > 200
+    having avg(tp.duration) > 200
 
 );
 
 
-insert into query10(
+Insert into query10 (
     select pn.pname
     from player pn
     left join sumTime st on pn.pid = st.lossid
     left join record r on st.lossid = r.pid
     where r.wins > r.losses
+    group by pn.pname
     order by pn.pname desc
 );
 
-drop view sumTime, timeplayed;
+--drop view sumTime, timeplayed;
     
