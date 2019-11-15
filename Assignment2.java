@@ -67,27 +67,148 @@ public class Assignment2 {
     }
 
     public int getChampions(int pid) {
-        return 0;
+        String sqlText = "SELECT count(c.pid) AS numofChamps FROM champion c WHERE c.pid = " + pid + ";";
+		{
+			try {
+				ps = connection.prepareStatement(sqlText);
+				rs = ps.executeQuery();
+				ps.close();
+
+				int numChamps = 0;
+				if (rs.next() == true) {
+					numChamps = rs.getInt("numofChamps");
+				}
+
+				rs.close();
+				return numChamps;
+
+			} catch (SQLException e) {
+				return 0;
+			}
+
+		}
     }
 
     public String getCourtInfo(int courtid) {
-        return "";
+        String sqlText = "SELECT c.courtid, c.courtname, c.capacity, c.tournamentname FROM court c WHERE c.courtid = "
+				+ courtid + ";";
+		{
+			try {
+				ps = connection.prepareStatement(sqlText);
+				rs = ps.executeQuery();
+				ps.close();
+
+				String courtInfo = "";
+				String cid = "";
+				String cname = "";
+				String capacity = "";
+				String tournamentname = "";
+				if (rs.next() == true) {
+					cid = rs.getString(1);
+					cname = rs.getString(2);
+					capacity = rs.getString(3);
+					tournamentname = rs.getString(4);
+
+					courtInfo = (cid + ":" + cname + ":" + capacity + ":" + tournamentname);
+
+					rs.close();
+					return courtInfo;
+				} else {
+					rs.close();
+					return "";
+				}
+
+			} catch (SQLException e) {
+				return "";
+
+			}
+
+		}
     }
 
     public boolean chgRecord(int pid, int year, int wins, int losses) {
-        return false;
+        String sqlText = "UPDATE a2.record SET wins = " + wins + ", losses = " + losses + " WHERE pid = " + pid
+				+ "and year = " + year + ";";
+		{
+			try {
+				ps = connection.prepareStatement(sqlText);
+				ps.executeUpdate();
+				ps.close();
+				return true;
+
+			} catch (SQLException e) {
+				return false;
+			}
+
+		}
     }
 
     public boolean deleteMatcBetween(int p1id, int p2id) {
-        return false;
+        String sqlText = "DELETE FROM a2.event WHERE (event.winid = " + p1id + " AND event.lossid = " + p2id
+				+ ") OR (event.winid = " + p2id + " AND event.lossid = " + p1id + ");";
+
+		try {
+			ps = connection.prepareStatement(sqlText);
+			ps.executeUpdate();
+			ps.close();
+			return true;
+
+		} catch (SQLException e) {
+			return false;
+		}
+
     }
 
     public String listPlayerRanking() {
-        return "";
+        String sqlText = "SELECT p.pname, p.globalrank FROM a2.player AS p ORDER BY globalrank DESC;";
+		{
+			try {
+				ps = connection.prepareStatement(sqlText);
+				rs = ps.executeQuery();
+				ps.close();
+
+				String rankList = "";
+				String pName = "";
+				String pRank = "";
+				while (rs.next() == true) {
+					pName = rs.getString(1);
+					pRank = rs.getString(2);
+
+					rankList = rankList + (pName + ":" + pRank + "\n");
+				}
+
+				rs.close();
+				return rankList;
+
+			} catch (SQLException e) {
+				return "";
+
+			}
+
+		}
     }
 
     public int findTriCircle() {
-        return 0;
+        String sqlText = "SELECT count(A.pid) AS numTris FROM a2.event AS A, a2.event AS B, a2.event AS C WHERE A.lossid = B.winid AND B.lossid = C.winid AND C.lossid = A.winid";
+		{
+			try {
+				ps = connection.prepareStatement(sqlText);
+				rs = ps.executeQuery();
+				ps.close();
+
+				int numTris = 0;
+				if (rs.next() == true) {
+					numTris = rs.getInt("numTris");
+				}
+
+				rs.close();
+				return numTris;
+
+			} catch (SQLException e) {
+				return 0;
+			}
+
+		}
     }
 
     public boolean updateDB() {
