@@ -159,12 +159,12 @@ DROP VIEW maxChampionships;
 create or replace view timeplayed as (
 select lossid, duration from event
 union all
-select winid, duration from event
+select winid, duration from eventP
 group by lossid, winid, duration
 
 );
 
---sum of duration of each player over 200
+--sum of duration of each player avg over 200 
 create or replace view sumTime as (
     select tp.lossid, avg(tp.duration)
     from timeplayed tp
@@ -184,3 +184,4 @@ Insert into query10 (
 );
 
 drop view sumTime, timeplayed;
+    
