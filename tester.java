@@ -13,7 +13,7 @@ public static void main(String[] args) {
 
     Assignment2 a2 = new Assignment2();
 
-
+    //add your username and password below
     boolean connected = a2.connectDB("jdbc:postgresql://db:5432/<username>", "<username>", "<student number>");
     if (connected){
         System.out.println("Database connected");
