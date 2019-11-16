@@ -18,11 +18,10 @@ public class Assignment2 {
 
     // CONSTRUCTOR
     Assignment2() {
-        System.out.println("-------- PostgreSQL JDBC Connection Testing ------------");
 
         try {
             // Load the JDBC driver
-            Class.forName(myDriver);
+			Class.forName(myDriver);
 
         } catch (ClassNotFoundException e) {
             return;
@@ -54,10 +53,9 @@ public class Assignment2 {
     }
 
     public boolean insertPlayer(int pid, String pname, int globalRank, int cid) {
-        String sqlText = "INSERT INTO a2.player (pid, pname, globalRank, cid) VALUES (" + pid + ", \'" + pname + "\',"
-                + globalRank + "," + cid + ");";
+		String sqlText1 = "INSERT INTO a2.player (pid, pname, globalrank, cid) VALUES (" + pid + ", \'" + pname + "\', " + globalRank + ", " + cid + ");";
         try {
-            ps = connection.prepareStatement(sqlText);
+			ps = connection.prepareStatement(sqlText1);
             ps.executeUpdate();
             ps.close();
             return true;
@@ -71,8 +69,8 @@ public class Assignment2 {
 		{
 			try {
 				ps = connection.prepareStatement(sqlText);
-				rs = ps.executeQuery();
-				ps.close();
+				ps = ps.executeQuery();
+				rs.close();
 
 				int numChamps = 0;
 				if (rs.next() == true) {
