@@ -69,8 +69,8 @@ public class Assignment2 {
 		{
 			try {
 				ps = connection.prepareStatement(sqlText);
-				ps = ps.executeQuery();
-				rs.close();
+				rs = ps.executeQuery();
+				ps.close();
 
 				int numChamps = 0;
 				if (rs.next() == true) {
