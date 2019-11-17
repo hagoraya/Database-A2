@@ -187,7 +187,7 @@ public class Assignment2 {
     }
 
     public int findTriCircle() {
-        String sqlText = "SELECT count(A.pid) AS numTris FROM a2.event AS A, a2.event AS B, a2.event AS C WHERE A.lossid = B.winid AND B.lossid = C.winid AND C.lossid = A.winid";
+        String sqlText = "SELECT count(C.winid) AS numTris FROM a2.event AS A, a2.event AS B, a2.event AS C WHERE C.lossid = A.winid AND A.lossid = B.winid AND B.lossid = C.winid;";
 		{
 			try {
 				ps = connection.prepareStatement(sqlText);
@@ -200,7 +200,7 @@ public class Assignment2 {
 
         ps.close();
 				rs.close();
-				return numTris;
+				return numTris/3;
 
 			} catch (SQLException e) {
 				return 0;
@@ -210,10 +210,10 @@ public class Assignment2 {
     }
 
     public boolean updateDB() {
-        String updb = "DROP TABLE IF EXISTS a2.champtionPlayers;"
+        String updb = "DROP TABLE IF EXISTS a2.championPlayers;"
                 + "CREATE TABLE a2.championPlayers (pid INTEGER, pname VARCHAR, nchampions INTEGER);"
-                + "INSERT INTO a2.championPlayers (" + "SELECT player.pid, pname, count(tid)" + "FROM a2.player"
-                + "INNER JOIN a2.champion ON player.pid = champion.pid" + "GROUP BY player.pid );";
+                + "INSERT INTO a2.championPlayers (" + "SELECT player.pid, pname, count(tid)" + " FROM a2.player"
+                + " INNER JOIN a2.champion ON player.pid = champion.pid" + " GROUP BY player.pid);";
 
         try {
             sql = connection.createStatement();
