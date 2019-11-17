@@ -65,18 +65,18 @@ public class Assignment2 {
     }
 
     public int getChampions(int pid) {
-        String sqlText = "SELECT count(c.pid) AS numofChamps FROM champion c WHERE c.pid = " + pid + ";";
+        String sqlText = "SELECT count(c.pid) AS numofChamps FROM a2.champion c WHERE c.pid = " + pid + ";";
 		{
 			try {
 				ps = connection.prepareStatement(sqlText);
 				rs = ps.executeQuery();
-				ps.close();
 
 				int numChamps = 0;
 				if (rs.next() == true) {
 					numChamps = rs.getInt("numofChamps");
 				}
 
+        ps.close();
 				rs.close();
 				return numChamps;
 
@@ -88,13 +88,12 @@ public class Assignment2 {
     }
 
     public String getCourtInfo(int courtid) {
-        String sqlText = "SELECT c.courtid, c.courtname, c.capacity, c.tournamentname FROM court c WHERE c.courtid = "
+        String sqlText = "SELECT c.courtid, c.courtname, c.capacity, c.tournamentname FROM a2.court c WHERE c.courtid = "
 				+ courtid + ";";
 		{
 			try {
 				ps = connection.prepareStatement(sqlText);
 				rs = ps.executeQuery();
-				ps.close();
 
 				String courtInfo = "";
 				String cid = "";
@@ -109,6 +108,7 @@ public class Assignment2 {
 
 					courtInfo = (cid + ":" + cname + ":" + capacity + ":" + tournamentname);
 
+          ps.close();
 					rs.close();
 					return courtInfo;
 				} else {
@@ -163,7 +163,6 @@ public class Assignment2 {
 			try {
 				ps = connection.prepareStatement(sqlText);
 				rs = ps.executeQuery();
-				ps.close();
 
 				String rankList = "";
 				String pName = "";
@@ -175,6 +174,7 @@ public class Assignment2 {
 					rankList = rankList + (pName + ":" + pRank + "\n");
 				}
 
+        ps.close();
 				rs.close();
 				return rankList;
 
@@ -192,13 +192,13 @@ public class Assignment2 {
 			try {
 				ps = connection.prepareStatement(sqlText);
 				rs = ps.executeQuery();
-				ps.close();
 
 				int numTris = 0;
 				if (rs.next() == true) {
 					numTris = rs.getInt("numTris");
 				}
 
+        ps.close();
 				rs.close();
 				return numTris;
 
