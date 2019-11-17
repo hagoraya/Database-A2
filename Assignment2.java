@@ -210,7 +210,7 @@ public class Assignment2 {
     }
 
     public boolean updateDB() {
-        String updb = "DROP TABLE IF EXISTS a2.champtionPlayers;"
+        String updb = "DROP TABLE IF EXISTS a2.championPlayers;"
                 + "CREATE TABLE a2.championPlayers (pid INTEGER, pname VARCHAR, nchampions INTEGER);"
                 + "INSERT INTO a2.championPlayers (" + "SELECT player.pid, pname, count(tid)" + "FROM a2.player"
                 + "INNER JOIN a2.champion ON player.pid = champion.pid" + "GROUP BY player.pid );";
