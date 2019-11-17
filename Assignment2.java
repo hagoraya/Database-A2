@@ -158,7 +158,7 @@ public class Assignment2 {
     }
 
     public String listPlayerRanking() {
-        String sqlText = "SELECT p.pname, p.globalrank FROM a2.player AS p ORDER BY globalrank DESC;";
+        String sqlText = "SELECT p.pname, p.globalrank FROM a2.player AS p ORDER BY globalrank ASC;";
 		{
 			try {
 				ps = connection.prepareStatement(sqlText);
