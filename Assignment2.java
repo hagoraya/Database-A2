@@ -88,7 +88,7 @@ public class Assignment2 {
     }
 
     public String getCourtInfo(int courtid) {
-        String sqlText = "SELECT c.courtid, c.courtname, c.capacity, c.tournamentname FROM a2.court c WHERE c.courtid = "
+        String sqlText = "SELECT c.courtid, c.courtname, c.capacity, t.tname FROM a2.court c, a2.tournament t WHERE courtid = "
 				+ courtid + ";";
 		{
 			try {
